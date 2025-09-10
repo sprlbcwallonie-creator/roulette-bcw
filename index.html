@@ -28,19 +28,22 @@ html, body {
 body {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start; /* on commence en haut, pas centré verticalement */
+    justify-content: space-between; /* espace entre le haut et le bas */
     align-items: center;
     font-family: Arial, sans-serif;
     text-align: center;
+    height: 100vh; /* plein écran */
+    margin: 0;
+    padding: 0;
 }
 
 #canvas {
     border: 10px solid #333;
     border-radius: 50%;
-    width: 90vw;     
+    width: 90vw;
+    max-width: 600px;
     height: auto;
-    max-width: none;
-    max-height: none;
+    max-height: 60vh; /* canvas ne dépasse pas 60% de la hauteur écran */
 }
 #spinBtn { 
     margin-top: 30px; 
@@ -200,22 +203,10 @@ ctx.fillText(prizes[i], radius * 0.6, 0);
 
 // --- Canvas responsive ---
 function resizeCanvas() {
-    // Hauteur totale des éléments autour du canvas
-    const topHeight = document.querySelector('h1').offsetHeight
-                    + document.querySelector('form').offsetHeight
-                    + 20; // marge au-dessus du canvas
-
-    const bottomHeight = document.querySelector('#spinBtn').offsetHeight
-                       + document.querySelector('#result').offsetHeight
-                       + 20; // marge en dessous du canvas
-
-    const availableHeight = window.innerHeight - topHeight - bottomHeight;
-
-    const size = Math.min(window.innerWidth * 0.95, availableHeight);
-
+    // taille responsive : max 60% de la hauteur écran et 90% largeur
+    const size = Math.min(window.innerWidth * 0.9, window.innerHeight * 0.6);
     canvas.width = size;
     canvas.height = size;
-
     drawWheel(currentRotation);
 }
 window.addEventListener('resize', resizeCanvas);
