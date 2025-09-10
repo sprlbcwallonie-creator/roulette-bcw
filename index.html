@@ -114,6 +114,7 @@ input::placeholder {
 
 <script>
 const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d'); // <<< ajouter cette ligne
 const spinSound = new Audio("spin.mp3");
 spinSound.loop = true; // pendant la rotation
 
