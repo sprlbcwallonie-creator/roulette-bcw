@@ -165,8 +165,9 @@ function drawWheel(rotation=0){
         ctx.textBaseline = "middle";
         ctx.strokeStyle = "rgba(0,0,0,0.5)";
         ctx.lineWidth = 2;
-        ctx.strokeText(prizes[i], radius / 2, 0);
-        ctx.fillText(prizes[i], radius / 2, 0);
+       ctx.strokeText(prizes[i], radius * 0.7, 0);
+ctx.fillText(prizes[i], radius * 0.7, 0);
+
         ctx.restore();
     }
 
