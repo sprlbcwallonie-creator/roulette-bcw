@@ -22,7 +22,7 @@ html, body {
     margin: 0;
     padding: 0;
     height: 100%;
-    /* overflow: hidden; */ /* retirer pour permettre le scroll si besoin */
+    overflow: hidden; /* empêche le scroll vertical */
 }
 
 body {
@@ -39,8 +39,8 @@ body {
     border-radius: 50%;
     width: 90vw;     
     height: auto;
-    max-width: 600px;
-    max-height: 60vh; /* limite la hauteur pour laisser place au titre et bouton */
+    max-width: none;
+    max-height: none;
 }
 #spinBtn { 
     margin-top: 30px; 
@@ -200,7 +200,13 @@ ctx.fillText(prizes[i], radius * 0.6, 0);
 
 // --- Canvas responsive ---
 function resizeCanvas() {
-    const size = Math.min(window.innerWidth * 0.9, window.innerHeight * 0.6); // 60% de la hauteur
+    // Calculer la hauteur disponible après les autres éléments
+    const topElementsHeight = document.querySelector('h1').offsetHeight
+                            + document.querySelector('form').offsetHeight
+                            + document.querySelector('#spinBtn').offsetHeight
+                            + 40; // marge
+    const availableHeight = window.innerHeight - topElementsHeight;
+    const size = Math.min(window.innerWidth * 0.95, availableHeight);
     canvas.width = size;
     canvas.height = size;
     drawWheel(currentRotation);
