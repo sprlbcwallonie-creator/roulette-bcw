@@ -200,15 +200,22 @@ ctx.fillText(prizes[i], radius * 0.6, 0);
 
 // --- Canvas responsive ---
 function resizeCanvas() {
-    // Calculer la hauteur disponible après les autres éléments
-    const topElementsHeight = document.querySelector('h1').offsetHeight
-                            + document.querySelector('form').offsetHeight
-                            + document.querySelector('#spinBtn').offsetHeight
-                            + 40; // marge
-    const availableHeight = window.innerHeight - topElementsHeight;
+    // Hauteur totale des éléments autour du canvas
+    const topHeight = document.querySelector('h1').offsetHeight
+                    + document.querySelector('form').offsetHeight
+                    + 20; // marge au-dessus du canvas
+
+    const bottomHeight = document.querySelector('#spinBtn').offsetHeight
+                       + document.querySelector('#result').offsetHeight
+                       + 20; // marge en dessous du canvas
+
+    const availableHeight = window.innerHeight - topHeight - bottomHeight;
+
     const size = Math.min(window.innerWidth * 0.95, availableHeight);
+
     canvas.width = size;
     canvas.height = size;
+
     drawWheel(currentRotation);
 }
 window.addEventListener('resize', resizeCanvas);
