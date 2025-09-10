@@ -119,6 +119,11 @@ spinSound.loop = true; // pendant la rotation
 
 const winSound = new Audio("win.mp3");   // son victoire
 const loseSound = new Audio("lose.mp3"); // son défaite
+// Précharge les fichiers audio pour éviter que le canvas bloque sur mobile
+spinSound.load();
+winSound.load();
+loseSound.load();
+
 spinSound.loop = true;
 const prizes = ["Porte-clés", "Câble USB", "Stylo", "Voucher 200€", "Pas de chance :("];
 const colors = ["#3f2794", "#3f2794", "#3f2794", "#27C8F5", "#3f2794"];
@@ -226,7 +231,8 @@ document.getElementById('spinBtn').addEventListener('click', () => {
     }
 
     spinSound.currentTime = 0;
-    spinSound.play();
+spinSound.play().catch(err => console.log("Autoplay bloqué :", err));
+
 
     const sliceAngle = 2 * Math.PI / prizes.length;
     const winningIndex = choosePrize(prizes, weights);
