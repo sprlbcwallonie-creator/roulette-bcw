@@ -60,13 +60,12 @@ body {
     filter: drop-shadow(2px 2px 3px rgba(0,0,0,0.5));
 }
 h1 {
-    font-size: 7vw; /* un peu plus gros pour tablette */
+    font-size: 5vw; 
     color: #3f2794;
     margin-bottom: 20px;
     font-weight: bold;
     line-height: 1.2;
 }
-
 form { margin-bottom: 30px; }
 input {
     padding: 12px 15px;
@@ -154,7 +153,7 @@ function drawWheel(rotation=0){
         ctx.translate(centerX, centerY);
         ctx.rotate(startAngle + sliceAngle/2);
         ctx.fillStyle = "#fff";
-        ctx.font = "bold 20px 'Segoe UI', sans-serif";
+        ctx.font = "bold " + (radius / 6) + "px 'Segoe UI', sans-serif";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.strokeStyle = "rgba(0,0,0,0.5)";
