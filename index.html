@@ -25,38 +25,22 @@ html, body {
     overflow: hidden; /* empêche le scroll vertical */
 }
 
-html, body {
-    height: 100vh;
-    margin: 0;
-    padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom) 0;
+body {
     display: flex;
     flex-direction: column;
-}
-
-#top {
-    padding: 10px;
-}
-
-#middle {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start; /* on commence en haut, pas centré verticalement */
     align-items: center;
-}
-
-#bottom {
-    padding: 10px;
+    font-family: Arial, sans-serif;
     text-align: center;
 }
 
 #canvas {
     border: 10px solid #333;
     border-radius: 50%;
-    width: 90vw;
-    max-width: 600px;
+    width: 90vw;     
     height: auto;
-    max-height: 60vh; /* canvas ne dépasse pas 60% de la hauteur écran */
+    max-width: none;
+    max-height: none;
 }
 #spinBtn { 
     margin-top: 30px; 
@@ -116,38 +100,22 @@ input::placeholder {
 </head>
 <body>
 
-<div id="top">
-  <h1>Tourne la roue et gagne un cadeau BCW !</h1>
-  <form id="userForm">
-    <input type="text" id="name" name="name" placeholder="Votre nom" required><br>
-    <input type="email" id="email" name="email" placeholder="Votre e-mail" required><br>
-  </form>
-</div>
+<h1>Tourne la roue et gagne un cadeau BCW !</h1>
 
-<div id="middle">
-  <canvas id="canvas"></canvas>
-  <div id="pointer"></div>
-</div>
+<form id="userForm">
+  <input type="text" id="name" name="name" placeholder="Votre nom" required><br>
+  <input type="email" id="email" name="email" placeholder="Votre e-mail" required><br>
+</form>
 
-<div id="bottom">
-  <button id="spinBtn">Tourner</button>
-  <p id="result"></p>
-</div>
+<canvas id="canvas"></canvas>
+<div id="pointer"></div>
+<button id="spinBtn">Tourner</button>
+<p id="result"></p>
 
 <script>
 const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d'); // <<< ajouter cette ligne
-const spinSound = new Audio("spin.mp3");
-spinSound.loop = true; // pendant la rotation
+const ctx = canvas.getContext('2d');
 
-const winSound = new Audio("win.mp3");   // son victoire
-const loseSound = new Audio("lose.mp3"); // son défaite
-// Précharge les fichiers audio pour éviter que le canvas bloque sur mobile
-spinSound.load();
-winSound.load();
-loseSound.load();
-
-spinSound.loop = true;
 const prizes = ["Porte-clés", "Câble USB", "Stylo", "Voucher 200€", "Pas de chance :("];
 const colors = ["#3f2794", "#3f2794", "#3f2794", "#27C8F5", "#3f2794"];
 const weights = [0.4, 0.25, 0.15, 0.01, 0.1];
@@ -196,7 +164,6 @@ function drawWheel(rotation=0){
         ctx.rotate(startAngle + sliceAngle/2);
         ctx.fillStyle = "#fff";
 
-        // --- Taille du texte responsive ---
         let fontSize = Math.floor(radius / 10);
         fontSize = Math.max(12, Math.min(fontSize, 26));
         ctx.font = "bold " + fontSize + "px 'Segoe UI', sans-serif";
@@ -205,8 +172,8 @@ function drawWheel(rotation=0){
         ctx.textBaseline = "middle";
         ctx.strokeStyle = "rgba(0,0,0,0.5)";
         ctx.lineWidth = 2;
-       ctx.strokeText(prizes[i], radius * 0.6, 0);
-ctx.fillText(prizes[i], radius * 0.6, 0);
+        ctx.strokeText(prizes[i], radius * 0.6, 0);
+        ctx.fillText(prizes[i], radius * 0.6, 0);
 
         ctx.restore();
     }
@@ -222,19 +189,17 @@ ctx.fillText(prizes[i], radius * 0.6, 0);
 
 // --- Canvas responsive ---
 function resizeCanvas() {
-    // taille responsive : max 60% de la hauteur écran et 90% largeur
-    function resizeCanvas() {
-    const middle = document.getElementById('middle');
-    const middleHeight = middle.clientHeight;
-    const size = Math.min(window.innerWidth * 0.9, middleHeight);
+    const topElementsHeight = document.querySelector('h1').offsetHeight
+                            + document.querySelector('form').offsetHeight
+                            + 40;
+    const availableHeight = window.innerHeight - topElementsHeight;
+    const size = Math.min(window.innerWidth * 0.95, availableHeight);
     canvas.width = size;
     canvas.height = size;
     drawWheel(currentRotation);
 }
-
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
-
 
 let emailsUsed = JSON.parse(localStorage.getItem("emailsUsed") || "[]");
 
@@ -258,10 +223,6 @@ document.getElementById('spinBtn').addEventListener('click', () => {
         return;
     }
 
-    spinSound.currentTime = 0;
-spinSound.play().catch(err => console.log("Autoplay bloqué :", err));
-
-
     const sliceAngle = 2 * Math.PI / prizes.length;
     const winningIndex = choosePrize(prizes, weights);
     const prizeWon = prizes[winningIndex];
@@ -276,32 +237,21 @@ spinSound.play().catch(err => console.log("Autoplay bloqué :", err));
         const ease = 1 - Math.pow(1 - progress, 3);
         drawWheel(ease * stopAngle);
         if(progress < 1){
-    requestAnimationFrame(animate);
-} else {
-    spinSound.pause();
-    spinSound.currentTime = 0;
+            requestAnimationFrame(animate);
+        } else {
+            document.getElementById('result').textContent = "🎉 " + name + ", tu as gagné : " + prizeWon;
 
-    // jouer le son de victoire ou de défaite
-    if (prizeWon === "Pas de chance :(") {
-        loseSound.play();
-    } else {
-        winSound.play();
-    }
+            const formData = new FormData();
+            formData.append(ENTRY_NAME, name);
+            formData.append(ENTRY_EMAIL, email);
+            formData.append(ENTRY_PRIZE, prizeWon);
+            fetch(FORM_URL, { method: "POST", body: formData, mode: "no-cors" })
+                .then(() => console.log("Réponse enregistrée !"))
+                .catch(err => console.error("Erreur:", err));
 
-    document.getElementById('result').textContent = "🎉 " + name + ", tu as gagné : " + prizeWon;
-
-    const formData = new FormData();
-    formData.append(ENTRY_NAME, name);
-    formData.append(ENTRY_EMAIL, email);
-    formData.append(ENTRY_PRIZE, prizeWon);
-    fetch(FORM_URL, { method: "POST", body: formData, mode: "no-cors" })
-        .then(() => console.log("Réponse enregistrée !"))
-        .catch(err => console.error("Erreur:", err));
-
-    emailsUsed.push(email);
-    localStorage.setItem("emailsUsed", JSON.stringify(emailsUsed));
-}
-
+            emailsUsed.push(email);
+            localStorage.setItem("emailsUsed", JSON.stringify(emailsUsed));
+        }
     }
     requestAnimationFrame(animate);
 });
