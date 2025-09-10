@@ -22,15 +22,16 @@ body {
     text-align: center; 
     font-family: Arial; 
     margin-top: 50px; 
-    font-size: 16px; /* taille de base adaptée aux tablettes */
+    font-size: 16px; 
 }
 #canvas { 
     border: 10px solid #333; 
     border-radius: 50%; 
     display: block; 
     margin: 0 auto; 
-    max-width: 90vw; /* canvas responsive largeur */
-    height: auto;
+    width: 90vw;      
+    height: auto;     
+    max-width: 600px; 
 }
 #spinBtn { 
     margin-top: 30px; 
@@ -59,7 +60,7 @@ body {
     filter: drop-shadow(2px 2px 3px rgba(0,0,0,0.5));
 }
 h1 {
-    font-size: 4vw; /* texte responsive pour tablette */
+    font-size: 5vw; 
     color: #3f2794;
     margin-bottom: 20px;
     font-weight: bold;
@@ -103,12 +104,11 @@ input::placeholder {
 <p id="result"></p>
 
 <script>
-// --- Ton code JS existant reste identique ---
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const prizes = ["Porte-clés", "Câble USB", "Stylo", "Voucher 200€", "Pas de chance :("];
 const colors = ["#3f2794", "#3f2794", "#3f2794", "#27C8F5", "#3f2794"];
-const weights = [0.4, 0.25, 0.15, 0.01, 0.1]; // Probabilités
+const weights = [0.4, 0.25, 0.15, 0.01, 0.1];
 
 const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSe4MHWLd-4un1c3URtSPRm2w4MzWhzh_uRWoLgWJy94a4GtZg/formResponse"; 
 const ENTRY_NAME = "entry.1285431265";  
@@ -172,8 +172,9 @@ function drawWheel(rotation=0){
     ctx.stroke();
 }
 
+// --- Canvas responsive complet pour tablette ---
 function resizeCanvas() {
-    const size = Math.min(window.innerWidth * 0.9, 500);
+    const size = Math.min(window.innerWidth * 0.9, window.innerHeight * 0.9);
     canvas.width = size;
     canvas.height = size;
     drawWheel(currentRotation);
