@@ -22,14 +22,14 @@ html, body {
     margin: 0;
     padding: 0;
     height: 100%;
-    overflow: hidden; /* supprime la barre verticale */
+    /* overflow: hidden; */ /* retirer pour permettre le scroll si besoin */
 }
 
 body {
     display: flex;
     flex-direction: column;
-    justify-content: center; /* centre verticalement */
-    align-items: center;     /* centre horizontalement */
+    justify-content: flex-start; /* on commence en haut, pas centré verticalement */
+    align-items: center;
     font-family: Arial, sans-serif;
     text-align: center;
 }
@@ -37,9 +37,10 @@ body {
 #canvas {
     border: 10px solid #333;
     border-radius: 50%;
-    width: 90vw;     /* presque toute la largeur */
-    height: auto;    /* la hauteur sera fixée via JS */
+    width: 90vw;     
+    height: auto;
     max-width: 600px;
+    max-height: 60vh; /* limite la hauteur pour laisser place au titre et bouton */
 }
 #spinBtn { 
     margin-top: 30px; 
@@ -190,13 +191,14 @@ ctx.fillText(prizes[i], radius * 0.6, 0);
 
 // --- Canvas responsive ---
 function resizeCanvas() {
-    const size = Math.min(window.innerWidth * 0.9, window.innerHeight * 0.8); // 0.8 = laisse un peu d'espace
+    const size = Math.min(window.innerWidth * 0.9, window.innerHeight * 0.6); // 60% de la hauteur
     canvas.width = size;
     canvas.height = size;
     drawWheel(currentRotation);
 }
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
+
 
 let emailsUsed = JSON.parse(localStorage.getItem("emailsUsed") || "[]");
 
