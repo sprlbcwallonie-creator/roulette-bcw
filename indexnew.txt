@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Roue de la chance</title>
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#3f2794">
+
+<!-- Meta viewport pour mobile/tablette -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<!-- Pour iOS/iPad -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Roue">
+<link rel="apple-touch-icon" href="logo.png">
+
+<style>
+body { 
+    text-align: center; 
+    font-family: Arial; 
+    margin-top: 50px; 
+    font-size: 16px; /* taille de base adaptée aux tablettes */
+}
+#canvas { 
+    border: 10px solid #333; 
+    border-radius: 50%; 
+    display: block; 
+    margin: 0 auto; 
+    max-width: 90vw; /* canvas responsive largeur */
+    height: auto;
+}
+#spinBtn { 
+    margin-top: 30px; 
+    padding: 12px 25px; 
+    font-size: 16px; 
+    background-color: #3f2794; 
+    color: #fff; 
+    border: none; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3); 
+    transition: transform 0.2s; 
+}
+#spinBtn:hover { 
+    transform: scale(1.1); 
+}
+#pointer {
+    width: 0; 
+    height: 0; 
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-bottom: 35px solid #27C8F5;
+    position: relative;
+    margin: 0 auto;
+    top: -20px;
+    filter: drop-shadow(2px 2px 3px rgba(0,0,0,0.5));
+}
+h1 {
+    font-size: 4vw; /* texte responsive pour tablette */
+    color: #3f2794;
+    margin-bottom: 20px;
+    font-weight: bold;
+    line-height: 1.2;
+}
+form { margin-bottom: 30px; }
+input {
+    padding: 12px 15px;
+    margin: 10px 0;
+    border: 2px solid #3f2794;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 300px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+input:focus {
+    border-color: #6a4bd8;
+    box-shadow: 0 0 10px rgba(63,39,148,0.4);
+    outline: none;
+}
+input::placeholder { 
+    color: #999; 
+    font-style: italic; 
+}
+</style>
+</head>
+<body>
+
+<h1>Tourne la roue et gagne un cadeau BCW !</h1>
+
+<form id="userForm">
+  <input type="text" id="name" name="name" placeholder="Votre nom" required><br>
+  <input type="email" id="email" name="email" placeholder="Votre e-mail" required><br>
+</form>
+
+<canvas id="canvas"></canvas>
+<div id="pointer"></div>
+<button id="spinBtn">Tourner</button>
+<p id="result"></p>
+
+<script>
+// --- Ton code JS existant reste identique ---
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const prizes = ["Porte-clés", "Câble USB", "Stylo", "Voucher 200€", "Pas de chance :("];
+const colors = ["#3f2794", "#3f2794", "#3f2794", "#27C8F5", "#3f2794"];
+const weights = [0.4, 0.25, 0.15, 0.01, 0.1]; // Probabilités
+
+const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSe4MHWLd-4un1c3URtSPRm2w4MzWhzh_uRWoLgWJy94a4GtZg/formResponse"; 
+const ENTRY_NAME = "entry.1285431265";  
+const ENTRY_EMAIL = "entry.1288805862"; 
+const ENTRY_PRIZE = "entry.2001386939"; 
+
+let currentRotation = 0;
+
+function choosePrize(prizes, weights) {
+    let r = Math.random();
+    let cumulative = 0;
+    for (let i = 0; i < prizes.length; i++) {
+        cumulative += weights[i];
+        if (r < cumulative) return i;
+    }
+    return prizes.length - 1;
+}
+
+function drawWheel(rotation=0){
+    currentRotation = rotation;
+    const size = canvas.width;
+    const radius = size / 2;
+    const centerX = size / 2;
+    const centerY = size / 2;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    const sliceAngle = 2 * Math.PI / prizes.length;
+
+    for(let i=0; i<prizes.length; i++){
+        const startAngle = i * sliceAngle + rotation;
+        const endAngle = startAngle + sliceAngle;
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+        ctx.closePath();
+        ctx.fillStyle = colors[i % colors.length];
+        ctx.fill();
+        ctx.strokeStyle = "#222";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        ctx.save();
+        ctx.translate(centerX, centerY);
+        ctx.rotate(startAngle + sliceAngle/2);
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 20px 'Segoe UI', sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.strokeStyle = "rgba(0,0,0,0.5)";
+        ctx.lineWidth = 2;
+        ctx.strokeText(prizes[i], radius / 2, 0);
+        ctx.fillText(prizes[i], radius / 2, 0);
+        ctx.restore();
+    }
+
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, 40, 0, 2 * Math.PI);
+    ctx.fillStyle = "#fff";
+    ctx.fill();
+    ctx.strokeStyle = "#222";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+}
+
+function resizeCanvas() {
+    const size = Math.min(window.innerWidth * 0.9, 500);
+    canvas.width = size;
+    canvas.height = size;
+    drawWheel(currentRotation);
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+let emailsUsed = JSON.parse(localStorage.getItem("emailsUsed") || "[]");
+
+document.getElementById('spinBtn').addEventListener('click', () => {
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+
+    if (!name || !email) {
+        alert("Merci de remplir votre nom et votre e-mail avant de jouer !");
+        return;
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+        alert("Merci d’entrer une adresse e-mail valide !");
+        return;
+    }
+
+    if (emailsUsed.includes(email)) {
+        alert("Cette adresse e-mail a déjà été utilisée !");
+        return;
+    }
+
+    const sliceAngle = 2 * Math.PI / prizes.length;
+    const winningIndex = choosePrize(prizes, weights);
+    const prizeWon = prizes[winningIndex];
+    const stopAngle = (5*2*Math.PI) + Math.PI/2 - (winningIndex * sliceAngle + sliceAngle/2);
+
+    const duration = 4000;
+    const start = performance.now();
+
+    function animate(time){
+        const elapsed = time - start;
+        const progress = Math.min(elapsed/duration, 1);
+        const ease = 1 - Math.pow(1 - progress, 3);
+        drawWheel(ease * stopAngle);
+        if(progress < 1){
+            requestAnimationFrame(animate);
+        } else {
+            document.getElementById('result').textContent = "🎉 " + name + ", tu as gagné : " + prizeWon;
+
+            const formData = new FormData();
+            formData.append(ENTRY_NAME, name);
+            formData.append(ENTRY_EMAIL, email);
+            formData.append(ENTRY_PRIZE, prizeWon);
+            fetch(FORM_URL, { method: "POST", body: formData, mode: "no-cors" })
+                .then(() => console.log("Réponse enregistrée !"))
+                .catch(err => console.error("Erreur:", err));
+
+            emailsUsed.push(email);
+            localStorage.setItem("emailsUsed", JSON.stringify(emailsUsed));
+        }
+    }
+    requestAnimationFrame(animate);
+});
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js")
+    .then(() => console.log("Service Worker enregistré ✅"))
+    .catch(err => console.error("Erreur Service Worker:", err));
+}
+</script>
+</body>
+</html>
