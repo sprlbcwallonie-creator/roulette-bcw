@@ -35,12 +35,12 @@ body {
 }
 #spinBtn { 
     margin-top: 30px; 
-    padding: 18px 40px; /* plus grand padding */
-    font-size: 24px;     /* texte plus gros */
+    padding: 18px 40px;
+    font-size: 24px;
     background-color: #3f2794; 
     color: #fff; 
     border: none; 
-    border-radius: 12px; /* un peu plus arrondi pour le look “app” */
+    border-radius: 12px;
     cursor: pointer; 
     box-shadow: 0 4px 6px rgba(0,0,0,0.3); 
     transition: transform 0.2s; 
@@ -48,16 +48,15 @@ body {
 #spinBtn:hover { 
     transform: scale(1.1); 
 }
-
 #pointer {
     width: 0; 
     height: 0; 
-    border-left: 30px solid transparent;   /* plus large */
-    border-right: 30px solid transparent;  /* plus large */
-    border-bottom: 50px solid #27C8F5;    /* plus haut */
+    border-left: 30px solid transparent;
+    border-right: 30px solid transparent;
+    border-bottom: 50px solid #27C8F5;
     position: relative;
     margin: 0 auto;
-    top: -25px;  /* ajuster pour centrer sur la roue */
+    top: -25px;
     filter: drop-shadow(2px 2px 3px rgba(0,0,0,0.5));
 }
 h1 {
@@ -108,7 +107,7 @@ input::placeholder {
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const spinSound = new Audio("spin.mp3");
-spinSound.loop = true; // pour que le son continue pendant la rotation
+spinSound.loop = true;
 const prizes = ["Porte-clés", "Câble USB", "Stylo", "Voucher 200€", "Pas de chance :("];
 const colors = ["#3f2794", "#3f2794", "#3f2794", "#27C8F5", "#3f2794"];
 const weights = [0.4, 0.25, 0.15, 0.01, 0.1];
@@ -156,7 +155,12 @@ function drawWheel(rotation=0){
         ctx.translate(centerX, centerY);
         ctx.rotate(startAngle + sliceAngle/2);
         ctx.fillStyle = "#fff";
-        ctx.font = "bold 25px 'Segoe UI', sans-serif";
+
+        // --- Taille du texte responsive ---
+        let fontSize = Math.floor(radius / 10);
+        fontSize = Math.max(12, Math.min(fontSize, 26));
+        ctx.font = "bold " + fontSize + "px 'Segoe UI', sans-serif";
+
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.strokeStyle = "rgba(0,0,0,0.5)";
@@ -175,7 +179,7 @@ function drawWheel(rotation=0){
     ctx.stroke();
 }
 
-// --- Canvas responsive complet pour tablette ---
+// --- Canvas responsive ---
 function resizeCanvas() {
     const size = Math.min(window.innerWidth * 0.9, window.innerHeight * 0.9);
     canvas.width = size;
@@ -196,7 +200,6 @@ document.getElementById('spinBtn').addEventListener('click', () => {
         return;
     }
 
-
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(email)) {
         alert("Merci d’entrer une adresse e-mail valide !");
@@ -208,8 +211,8 @@ document.getElementById('spinBtn').addEventListener('click', () => {
         return;
     }
 
-spinSound.currentTime = 0; // recommence le son
-spinSound.play();
+    spinSound.currentTime = 0;
+    spinSound.play();
 
     const sliceAngle = 2 * Math.PI / prizes.length;
     const winningIndex = choosePrize(prizes, weights);
@@ -227,9 +230,8 @@ spinSound.play();
         if(progress < 1){
             requestAnimationFrame(animate);
         } else {
-// --- Ici la roue s'est arrêtée, donc on coupe le son ---
-        spinSound.pause();
-        spinSound.currentTime = 0;
+            spinSound.pause();
+            spinSound.currentTime = 0;
             document.getElementById('result').textContent = "🎉 " + name + ", tu as gagné : " + prizeWon;
 
             const formData = new FormData();
