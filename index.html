@@ -28,13 +28,13 @@ html, body {
 body {
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* espace entre le haut et le bas */
+    justify-content: space-between;
     align-items: center;
     font-family: Arial, sans-serif;
     text-align: center;
-    height: 100vh; /* plein écran */
+    height: 100vh;
     margin: 0;
-    padding: 0;
+    padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom) 0; /* ajoute espace sur iOS et Android */
 }
 
 #canvas {
@@ -204,10 +204,12 @@ ctx.fillText(prizes[i], radius * 0.6, 0);
 // --- Canvas responsive ---
 function resizeCanvas() {
     // taille responsive : max 60% de la hauteur écran et 90% largeur
-    const size = Math.min(window.innerWidth * 0.9, window.innerHeight * 0.6);
-    canvas.width = size;
-    canvas.height = size;
-    drawWheel(currentRotation);
+    const bottomOffset = 60; // espace pour les boutons système
+const size = Math.min(window.innerWidth * 0.9, window.innerHeight * 0.6 - bottomOffset);
+canvas.width = size;
+canvas.height = size;
+drawWheel(currentRotation);
+
 }
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
