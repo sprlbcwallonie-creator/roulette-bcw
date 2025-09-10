@@ -18,20 +18,28 @@
 <link rel="apple-touch-icon" href="logo.png">
 
 <style>
-body { 
-    text-align: center; 
-    font-family: Arial; 
-    margin-top: 50px; 
-    font-size: 16px; 
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden; /* supprime la barre verticale */
 }
-#canvas { 
-    border: 10px solid #333; 
-    border-radius: 50%; 
-    display: block; 
-    margin: 0 auto; 
-    width: 90vw;      
-    height: auto;     
-    max-width: 600px; 
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* centre verticalement */
+    align-items: center;     /* centre horizontalement */
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+#canvas {
+    border: 10px solid #333;
+    border-radius: 50%;
+    width: 90vw;     /* presque toute la largeur */
+    height: auto;    /* la hauteur sera fixée via JS */
+    max-width: 600px;
 }
 #spinBtn { 
     margin-top: 30px; 
