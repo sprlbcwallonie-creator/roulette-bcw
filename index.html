@@ -60,7 +60,6 @@ body {
     top: -25px;  /* ajuster pour centrer sur la roue */
     filter: drop-shadow(2px 2px 3px rgba(0,0,0,0.5));
 }
-
 h1 {
     font-size: 5vw; 
     color: #3f2794;
@@ -108,6 +107,8 @@ input::placeholder {
 <script>
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
+const spinSound = new Audio("spin.mp3");
+spinSound.loop = true; // pour que le son continue pendant la rotation
 const prizes = ["Porte-clés", "Câble USB", "Stylo", "Voucher 200€", "Pas de chance :("];
 const colors = ["#3f2794", "#3f2794", "#3f2794", "#27C8F5", "#3f2794"];
 const weights = [0.4, 0.25, 0.15, 0.01, 0.1];
@@ -195,6 +196,7 @@ document.getElementById('spinBtn').addEventListener('click', () => {
         return;
     }
 
+
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(email)) {
         alert("Merci d’entrer une adresse e-mail valide !");
@@ -206,12 +208,15 @@ document.getElementById('spinBtn').addEventListener('click', () => {
         return;
     }
 
+spinSound.currentTime = 0; // recommence le son
+spinSound.play();
+
     const sliceAngle = 2 * Math.PI / prizes.length;
     const winningIndex = choosePrize(prizes, weights);
     const prizeWon = prizes[winningIndex];
     const stopAngle = (5*2*Math.PI) + Math.PI/2 - (winningIndex * sliceAngle + sliceAngle/2);
 
-    const duration = 4000;
+    const duration = 8000;
     const start = performance.now();
 
     function animate(time){
@@ -222,6 +227,9 @@ document.getElementById('spinBtn').addEventListener('click', () => {
         if(progress < 1){
             requestAnimationFrame(animate);
         } else {
+// --- Ici la roue s'est arrêtée, donc on coupe le son ---
+        spinSound.pause();
+        spinSound.currentTime = 0;
             document.getElementById('result').textContent = "🎉 " + name + ", tu as gagné : " + prizeWon;
 
             const formData = new FormData();
@@ -247,4 +255,3 @@ if ("serviceWorker" in navigator) {
 </script>
 </body>
 </html>
-
