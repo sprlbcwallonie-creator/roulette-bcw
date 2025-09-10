@@ -190,13 +190,13 @@ ctx.fillText(prizes[i], radius * 0.6, 0);
 
 // --- Canvas responsive ---
 function resizeCanvas() {
-    const size = Math.min(window.innerWidth * 0.9, window.innerHeight * 0.9);
+    const size = Math.min(window.innerWidth * 0.9, window.innerHeight * 0.8); // 0.8 = laisse un peu d'espace
     canvas.width = size;
     canvas.height = size;
     drawWheel(currentRotation);
 }
-resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
 
 let emailsUsed = JSON.parse(localStorage.getItem("emailsUsed") || "[]");
 
