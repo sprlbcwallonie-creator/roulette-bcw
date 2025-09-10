@@ -114,8 +114,11 @@ input::placeholder {
 
 <script>
 const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
 const spinSound = new Audio("spin.mp3");
+spinSound.loop = true; // pendant la rotation
+
+const winSound = new Audio("win.mp3");   // son victoire
+const loseSound = new Audio("lose.mp3"); // son défaite
 spinSound.loop = true;
 const prizes = ["Porte-clés", "Câble USB", "Stylo", "Voucher 200€", "Pas de chance :("];
 const colors = ["#3f2794", "#3f2794", "#3f2794", "#27C8F5", "#3f2794"];
@@ -239,23 +242,32 @@ document.getElementById('spinBtn').addEventListener('click', () => {
         const ease = 1 - Math.pow(1 - progress, 3);
         drawWheel(ease * stopAngle);
         if(progress < 1){
-            requestAnimationFrame(animate);
-        } else {
-            spinSound.pause();
-            spinSound.currentTime = 0;
-            document.getElementById('result').textContent = "🎉 " + name + ", tu as gagné : " + prizeWon;
+    requestAnimationFrame(animate);
+} else {
+    spinSound.pause();
+    spinSound.currentTime = 0;
 
-            const formData = new FormData();
-            formData.append(ENTRY_NAME, name);
-            formData.append(ENTRY_EMAIL, email);
-            formData.append(ENTRY_PRIZE, prizeWon);
-            fetch(FORM_URL, { method: "POST", body: formData, mode: "no-cors" })
-                .then(() => console.log("Réponse enregistrée !"))
-                .catch(err => console.error("Erreur:", err));
+    // jouer le son de victoire ou de défaite
+    if (prizeWon === "Pas de chance :(") {
+        loseSound.play();
+    } else {
+        winSound.play();
+    }
 
-            emailsUsed.push(email);
-            localStorage.setItem("emailsUsed", JSON.stringify(emailsUsed));
-        }
+    document.getElementById('result').textContent = "🎉 " + name + ", tu as gagné : " + prizeWon;
+
+    const formData = new FormData();
+    formData.append(ENTRY_NAME, name);
+    formData.append(ENTRY_EMAIL, email);
+    formData.append(ENTRY_PRIZE, prizeWon);
+    fetch(FORM_URL, { method: "POST", body: formData, mode: "no-cors" })
+        .then(() => console.log("Réponse enregistrée !"))
+        .catch(err => console.error("Erreur:", err));
+
+    emailsUsed.push(email);
+    localStorage.setItem("emailsUsed", JSON.stringify(emailsUsed));
+}
+
     }
     requestAnimationFrame(animate);
 });
