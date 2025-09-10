@@ -25,16 +25,29 @@ html, body {
     overflow: hidden; /* empêche le scroll vertical */
 }
 
-body {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    font-family: Arial, sans-serif;
-    text-align: center;
+html, body {
     height: 100vh;
     margin: 0;
-    padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom) 0; /* ajoute espace sur iOS et Android */
+    padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom) 0;
+    display: flex;
+    flex-direction: column;
+}
+
+#top {
+    padding: 10px;
+}
+
+#middle {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#bottom {
+    padding: 10px;
+    text-align: center;
 }
 
 #canvas {
@@ -103,17 +116,23 @@ input::placeholder {
 </head>
 <body>
 
-<h1>Tourne la roue et gagne un cadeau BCW !</h1>
+<div id="top">
+  <h1>Tourne la roue et gagne un cadeau BCW !</h1>
+  <form id="userForm">
+    <input type="text" id="name" name="name" placeholder="Votre nom" required><br>
+    <input type="email" id="email" name="email" placeholder="Votre e-mail" required><br>
+  </form>
+</div>
 
-<form id="userForm">
-  <input type="text" id="name" name="name" placeholder="Votre nom" required><br>
-  <input type="email" id="email" name="email" placeholder="Votre e-mail" required><br>
-</form>
+<div id="middle">
+  <canvas id="canvas"></canvas>
+  <div id="pointer"></div>
+</div>
 
-<canvas id="canvas"></canvas>
-<div id="pointer"></div>
-<button id="spinBtn">Tourner</button>
-<p id="result"></p>
+<div id="bottom">
+  <button id="spinBtn">Tourner</button>
+  <p id="result"></p>
+</div>
 
 <script>
 const canvas = document.getElementById('canvas');
@@ -204,13 +223,15 @@ ctx.fillText(prizes[i], radius * 0.6, 0);
 // --- Canvas responsive ---
 function resizeCanvas() {
     // taille responsive : max 60% de la hauteur écran et 90% largeur
-    const bottomOffset = 100; // espace pour les boutons système
-const size = Math.min(window.innerWidth * 0.9, window.innerHeight * 0.6 - bottomOffset);
-canvas.width = size;
-canvas.height = size;
-drawWheel(currentRotation);
-
+    function resizeCanvas() {
+    const middle = document.getElementById('middle');
+    const middleHeight = middle.clientHeight;
+    const size = Math.min(window.innerWidth * 0.9, middleHeight);
+    canvas.width = size;
+    canvas.height = size;
+    drawWheel(currentRotation);
 }
+
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
