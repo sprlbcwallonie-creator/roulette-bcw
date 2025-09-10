@@ -8,6 +8,9 @@
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#3f2794">
 
+<!-- Meta viewport pour mobile/tablette -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
 <!-- Pour iOS/iPad -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -15,23 +18,48 @@
 <link rel="apple-touch-icon" href="logo.png">
 
 <style>
-body { text-align: center; font-family: Arial; margin-top: 50px; }
-#canvas { border: 10px solid #333; border-radius: 50%; display: block; margin: 0 auto; }
-#spinBtn { margin-top: 30px; padding: 12px 25px; font-size: 16px; background-color: #3f2794; color: #fff; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: transform 0.2s; }
-#spinBtn:hover { transform: scale(1.1); }
+body { 
+    text-align: center; 
+    font-family: Arial; 
+    margin-top: 50px; 
+    font-size: 16px; /* taille de base adaptée aux tablettes */
+}
+#canvas { 
+    border: 10px solid #333; 
+    border-radius: 50%; 
+    display: block; 
+    margin: 0 auto; 
+    max-width: 90vw; /* canvas responsive largeur */
+    height: auto;
+}
+#spinBtn { 
+    margin-top: 30px; 
+    padding: 12px 25px; 
+    font-size: 16px; 
+    background-color: #3f2794; 
+    color: #fff; 
+    border: none; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3); 
+    transition: transform 0.2s; 
+}
+#spinBtn:hover { 
+    transform: scale(1.1); 
+}
 #pointer {
     width: 0; 
     height: 0; 
     border-left: 20px solid transparent;
     border-right: 20px solid transparent;
-    border-bottom: 35px solid #64E87A;
+    border-bottom: 35px solid #27C8F5;
     position: relative;
     margin: 0 auto;
     top: -20px;
     filter: drop-shadow(2px 2px 3px rgba(0,0,0,0.5));
 }
 h1 {
-    font-size: 2.2em;
+    font-size: 4vw; /* texte responsive pour tablette */
     color: #3f2794;
     margin-bottom: 20px;
     font-weight: bold;
@@ -54,7 +82,10 @@ input:focus {
     box-shadow: 0 0 10px rgba(63,39,148,0.4);
     outline: none;
 }
-input::placeholder { color: #999; font-style: italic; }
+input::placeholder { 
+    color: #999; 
+    font-style: italic; 
+}
 </style>
 </head>
 <body>
@@ -72,13 +103,13 @@ input::placeholder { color: #999; font-style: italic; }
 <p id="result"></p>
 
 <script>
+// --- Ton code JS existant reste identique ---
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
-const prizes = ["Porte-clés", "Câble USB", "Coque", "Voucher 200€", "Mini Powerbank"];
-const colors = ["#3f2794", "#3f2794", "#3f2794", "#64E87A", "#3f2794"];
-const weights = [0.4, 0.25, 0.15, 0.01, 0.1]; // Probabilités de chaque lot
+const prizes = ["Porte-clés", "Câble USB", "Stylo", "Voucher 200€", "Pas de chance :("];
+const colors = ["#3f2794", "#3f2794", "#3f2794", "#27C8F5", "#3f2794"];
+const weights = [0.4, 0.25, 0.15, 0.01, 0.1]; // Probabilités
 
-// === CONFIG GOOGLE FORM ===
 const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSe4MHWLd-4un1c3URtSPRm2w4MzWhzh_uRWoLgWJy94a4GtZg/formResponse"; 
 const ENTRY_NAME = "entry.1285431265";  
 const ENTRY_EMAIL = "entry.1288805862"; 
@@ -86,7 +117,6 @@ const ENTRY_PRIZE = "entry.2001386939";
 
 let currentRotation = 0;
 
-// Fonction pour choisir un lot selon les poids
 function choosePrize(prizes, weights) {
     let r = Math.random();
     let cumulative = 0;
@@ -97,7 +127,6 @@ function choosePrize(prizes, weights) {
     return prizes.length - 1;
 }
 
-// Dessiner la roue
 function drawWheel(rotation=0){
     currentRotation = rotation;
     const size = canvas.width;
@@ -143,7 +172,6 @@ function drawWheel(rotation=0){
     ctx.stroke();
 }
 
-// Adapter le canvas à la taille écran
 function resizeCanvas() {
     const size = Math.min(window.innerWidth * 0.9, 500);
     canvas.width = size;
@@ -153,7 +181,6 @@ function resizeCanvas() {
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
-// Liste des emails déjà utilisés
 let emailsUsed = JSON.parse(localStorage.getItem("emailsUsed") || "[]");
 
 document.getElementById('spinBtn').addEventListener('click', () => {
@@ -209,7 +236,6 @@ document.getElementById('spinBtn').addEventListener('click', () => {
     requestAnimationFrame(animate);
 });
 
-// === Enregistrement du Service Worker pour PWA ===
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("service-worker.js")
     .then(() => console.log("Service Worker enregistré ✅"))
