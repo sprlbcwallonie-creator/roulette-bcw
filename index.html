@@ -111,9 +111,9 @@ const spinSound = new Audio("spin.mp3");
 spinSound.loop = true; // pour que le son continue pendant la rotation
 const winSound = new Audio("win.mp3");
 const loseSound = new Audio("lose.mp3");
-const prizes = ["Voucher 50€", "Samsung Buds 2", "Pas de chance :(", "Voucher 250€", "Pas de chance :(", "Stylo", "Carnet", "Pas de chance :(", "Mug", "Pas de chance :("];
+const prizes = ["Voucher 50€", "Mug", "Pas de chance :(", "Voucher 250€", "Pas de chance :(", "Stylo", "Carnet", "Pas de chance :(", "Samsung Buds 2", "Pas de chance :("];
 const colors = ["#3f2794", "#3f2794", "#F52727", "#27C8F5", "#F52727", "#3f2794", "#3f2794", "#F52727", "#3f2794", "#F52727"];
-const weights = [0.02, 0.02, 0.50, 0.001, 0.289, 0.06, 0.05, 0.06];
+const weights = [0.02, 0.05, 0.50, 0.001, 0.289, 0.06, 0.02, 0.06];
 
 const FORM_URL = "https://docs.google.com/forms/d/1LIhG77uCC6XhkwNIb1hFploRh_PW_4AasMz0eo5OTAY/formResponse"; 
 const ENTRY_NAME = "entry.1663848871";  
@@ -273,6 +273,7 @@ if ("serviceWorker" in navigator) {
 </script>
 </body>
 </html>
+
 
 
 
