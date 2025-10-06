@@ -230,11 +230,15 @@ spinSound.play();
 // --- Ici la roue s'est arrêtée, donc on coupe le son ---
         spinSound.pause();
         spinSound.currentTime = 0;
-            if (prizeWon.includes("Pas de chance")) {
-    document.getElementById('result').textContent = "😢 " + name + ", pas de chance cette fois...";
+            const result = document.getElementById('result');
+if (prizeWon.includes("Pas de chance")) {
+    result.textContent = "😢 " + name + ", pas de chance cette fois...";
+    result.style.color = "red";
 } else {
-    document.getElementById('result').textContent = "🎉 " + name + ", tu as gagné : " + prizeWon + " !";
+    result.textContent = "🎉 " + name + ", tu as gagné : " + prizeWon + " !";
+    result.style.color = "green";
 }
+
 
 
             const formData = new FormData();
