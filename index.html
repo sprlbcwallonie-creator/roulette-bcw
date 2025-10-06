@@ -109,6 +109,8 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const spinSound = new Audio("spin.mp3");
 spinSound.loop = true; // pour que le son continue pendant la rotation
+const winSound = new Audio("win.mp3");
+const loseSound = new Audio("lose.mp3");
 const prizes = ["Voucher 50€", "Samsung Buds 2", "Pas de chance :(", "Voucher 250€", "Pas de chance :("];
 const colors = ["#3f2794", "#3f2794", "#F52727", "#27C8F5", "#F52727"];
 const weights = [0.03, 0.03, 0.6, 0.001, 0.339];
@@ -231,13 +233,20 @@ spinSound.play();
         spinSound.pause();
         spinSound.currentTime = 0;
             const result = document.getElementById('result');
-if (prizeWon.includes("Pas de chance")) {
-    result.textContent = "😢 " + name + ", pas de chance cette fois...";
-    result.style.color = "red";
-} else {
-    result.textContent = "🎉 " + name + ", tu as gagné : " + prizeWon + " !";
-    result.style.color = "green";
-}
+
+setTimeout(() => {
+    if (prizeWon.includes("Pas de chance")) {
+        loseSound.play();
+        result.textContent = "😢 " + name + ", pas de chance cette fois...";
+        result.style.color = "red";
+        result.style.fontWeight = "bold";
+    } else {
+        winSound.play();
+        result.textContent = "🎉 " + name + ", tu as gagné : " + prizeWon + " !";
+        result.style.color = "green";
+        result.style.fontWeight = "bold";
+    }
+}, 300);
 
 
 
